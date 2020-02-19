@@ -15,7 +15,7 @@ TBH this was mostly about getting an arduino nano to process input from a rotary
 ### Requirements 
 - If using a Nano, you must use the interrupt pins D2 and D3 for the rotary encoder A and B pins.
 - You must use the SSD1306 ASCII library, the Adafruit one is hueg leik xbox and slow slow slow.
-- I'm using a mechanical rotary encoder module that only has three resisters on the board with the connection. I've seen others that have components for smoothing out the signals, timing might be a little different on those.
+- I'm using a mechanical rotary encoder module that only has three resistors on the board with the connection. I've seen others that have components for smoothing out the signals, timing might be a little different on those.
 - If you're sharing power with the keyboard, you should unplug the keyboard from the computer before programming the nano, as there might be competing voltages and problems. I don't think this is actually a problem, but it's probably a good practice.
 - If you use the faster SPI OLED, you might not have any timing problems at all, so the delays might need to be adjusted
 
