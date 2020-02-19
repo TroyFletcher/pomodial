@@ -6,7 +6,9 @@
 ## Pomodial video on youtube
 [![Pomodial on the youtubes](https://img.youtube.com/vi/kT58mEs4q6I/0.jpg)](https://www.youtube.com/watch?v=kT58mEs4q6I)
 ***
-# A rotary encoder controlled countdown timer with an OLED display that doesn't lose rotary encoder polls, and is fine enough to track each individual click of the encoder for precise settings.
+## A rotary encoder controlled countdown timer with an OLED display that doesn't lose rotary encoder polls, and is fine enough to track each individual click of the encoder for precise settings.
+
+### NOTE: this is currently built into a keyboard, but all it does is share power with the keyboard, so this could be its own standalone device.
 
 TBH this was mostly about getting an arduino nano to process input from a rotary encoder ACURATELY while running an OLED. Please feel free to copy rotary encoder running portions to get your project working. I could not find anything online that did this well enough to track individual rotary encoder shifts without spazzing out and jumping around.
 
