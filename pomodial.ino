@@ -1,7 +1,10 @@
 #include <Wire.h>
 
-#define outputA 2
-#define outputB 3
+#define outputA 2 // digital pin A
+#define outputB 3 // digital pin B
+int buzzerPin = 15; // 15 = A1 on the Nano
+int buttonPin = 4;     // the number of the pushbutton pin (4 = D4 on the Nano)
+int rotary_encoder_jitter_delay = 30; // if your counter is jittery, adjust this higher
 
 #define readA bitRead(PIND,outputA)//faster than digitalRead()
 #define readB bitRead(PIND,outputB)//faster than digitalRead()
@@ -23,8 +26,6 @@ int countdown_minutes_prev = -1;
 byte aState;
 byte bState;
 byte aLastState;
-int buzzerPin = 15; // 15 = A1
-int buttonPin = 4;     // the number of the pushbutton pin
 
 //   pin   label  NANO    label  pin
 //           ________________
@@ -45,6 +46,7 @@ int buttonPin = 4;     // the number of the pushbutton pin
 //____12_____D12__|    |__D13____13__LED___
 //________________|    |___________________
 
+// the SSD1306Ascii library is much faster than the Adafruit one, and required.
 #include "SSD1306Ascii.h"
 #include "SSD1306AsciiAvrI2c.h"
 
@@ -57,15 +59,12 @@ int buttonPin = 4;     // the number of the pushbutton pin
 SSD1306AsciiAvrI2c oled;
 
 void setup() {
-  
-
 #if RST_PIN >= 0
-  oled.begin(&Adafruit128x64, I2C_ADDRESS, RST_PIN);
+	oled.begin(&Adafruit128x64, I2C_ADDRESS, RST_PIN);
 #else // RST_PIN >= 0
-  oled.begin(&Adafruit128x64, I2C_ADDRESS);
+	oled.begin(&Adafruit128x64, I2C_ADDRESS);
 #endif // RST_PIN >= 0
-  // Call oled.setI2cClock(frequency) to change from the default frequency.
-
+	// Call oled.setI2cClock(frequency) to change from the default frequency.
   oled.setFont(Adafruit5x7);
 	pinMode (buzzerPin, OUTPUT);
   
@@ -111,14 +110,14 @@ void loop() {
 		timer_state = '-';
 	}
   if (   counter != lastcounter
-				 || seconds != oldseconds)
+				 || seconds != oldseconds) // update screen every second, or every counter change
     {
       oldseconds = seconds;
       /* if time past due */
 			if (millis() > reset_time){
-				oled.invertDisplay(seconds % 2);
-				if(timer_state == '-' && 0 == ( seconds % 5 )){
-				chirp();
+				oled.invertDisplay(seconds % 2); // invert display every second while timer overdue
+				if(timer_state == '-' && 0 == ( seconds % 5 )){ // chirp every 5 seconds while overdue
+					chirp();
 				}
 			}
       if (counter != lastcounter){
@@ -173,17 +172,16 @@ void loop() {
       oldseconds = -1; // force a screen update by setting old seconds to unmatchable value
 			oled.invertDisplay(0);
 			countdown_minutes = abs(counter/2);
-    } else { // button just released
+    }
+		else { // button just released
 			if (countdown_minutes != 0){ // if the counter is zero, keep quiet
 				chirp();
+				// annoy(); nah, you don't want this.
 			}
-			/* annoy(); */
-      // display.println("NOTT");
-      // display.setTextSize(1);
-      // digitalWrite(basePin, LOW);
     }
   }
 }
+
 void isrA() {
   aState = readA; // Reads the "current" state of the outputA
   bState = readB; // Reads the "current" state of the outputA
@@ -193,10 +191,10 @@ void isrA() {
   } else { // clockwise
     counter ++;
   }
-  delay(30);
+  delay(rotary_encoder_jitter_delay); // this delay may need adjustment if your counter gets jittery
 }
 
-void fastClear() {
+void fastClear() { // this is slightly faster, but unused as it's not as good as clearToEOL
   for (uint8_t r = 0; r < 8; r++) {
     // set row to clear
     oled.setCursor(0, r);
@@ -213,9 +211,8 @@ void fastClear() {
   oled.setCursor(0, 0);
 }
 
-
 void chirp() {
-	int delay_short = 5; // this time varies based on the buzzer type
+	int delay_short = 5; // this time varies based on the buzzer type and maybe voltage
   tone(buzzerPin, 2078, delay_short);
   delay(delay_short);
   tone(buzzerPin, 4978, delay_short);
@@ -225,9 +222,9 @@ void chirp() {
 }
 
 void annoy() {
-	int delay_medium = 10;
-	tone(buzzerPin, 220, 10); 
-  delay(10); 
-	tone(buzzerPin, 100, 10); 
-	delay(10); 
+	int delay_medium = 10; // this time varies based on the buzzer type and maybe voltage
+	tone(buzzerPin, 220, delay_medium); 
+  delay(delay_medium); 
+	tone(buzzerPin, 100, delay_medium); 
+	delay(delay_medium); 
 }
