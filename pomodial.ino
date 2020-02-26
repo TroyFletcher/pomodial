@@ -23,7 +23,7 @@ int countdown_minutes_prev = -1;
 byte aState;
 byte bState;
 byte aLastState;
-int buzzerPin = 14; // 14 = A0
+int buzzerPin = 15; // 15 = A1
 int buttonPin = 4;     // the number of the pushbutton pin
 
 //   pin   label  NANO    label  pin
@@ -67,6 +67,7 @@ void setup() {
   // Call oled.setI2cClock(frequency) to change from the default frequency.
 
   oled.setFont(Adafruit5x7);
+	pinMode (buzzerPin, OUTPUT);
   
   attachInterrupt(digitalPinToInterrupt(outputA), isrA, CHANGE);
   pinMode (outputA,INPUT);
@@ -113,9 +114,12 @@ void loop() {
 				 || seconds != oldseconds)
     {
       oldseconds = seconds;
-      /* if (minutes > 24){ */
+      /* if time past due */
 			if (millis() > reset_time){
 				oled.invertDisplay(seconds % 2);
+				if(timer_state == '-' && 0 == ( seconds % 5 )){
+				chirp();
+				}
 			}
       if (counter != lastcounter){
         Serial.print("Position: ");
@@ -170,6 +174,10 @@ void loop() {
 			oled.invertDisplay(0);
 			countdown_minutes = abs(counter/2);
     } else { // button just released
+			if (countdown_minutes != 0){ // if the counter is zero, keep quiet
+				chirp();
+			}
+			/* annoy(); */
       // display.println("NOTT");
       // display.setTextSize(1);
       // digitalWrite(basePin, LOW);
@@ -203,4 +211,23 @@ void fastClear() {
     }
   }
   oled.setCursor(0, 0);
+}
+
+
+void chirp() {
+	int delay_short = 5; // this time varies based on the buzzer type
+  tone(buzzerPin, 2078, delay_short);
+  delay(delay_short);
+  tone(buzzerPin, 4978, delay_short);
+  delay(delay_short);
+	tone(buzzerPin, 2078, delay_short);
+  delay(delay_short);
+}
+
+void annoy() {
+	int delay_medium = 10;
+	tone(buzzerPin, 220, 10); 
+  delay(10); 
+	tone(buzzerPin, 100, 10); 
+	delay(10); 
 }
