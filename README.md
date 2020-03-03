@@ -23,3 +23,14 @@ TBH this was mostly about getting an arduino nano to process input from a rotary
 - There are some technical inconsistencies in how the rotary encoder A vs B inputs are processed, this could be cleaned up, but I was just happy to get the rotary encoder to the point where it wasn't slipping reads.
 - If you run this a a different clock speed, you may want need to tune the delay in the interrupt function, as that was tuned for the clock in the ATmega328p. This delay serves to let the reads of the traversal settle down, as the interrupt catches all the jitters in the mechanical rotary encoder's brush traversal. An optical encoder might not have this problem. 
 - The buzzer is off this build currently, but I will be adding a hilariously gigantic one to it soon.
+- Youtube video of gigantic (but surprisingly polite) buzzer linked below
+[![Pomodial on the youtubes](https://img.youtube.com/vi/zcWZJ_IPvpI/0.jpg)](https://www.youtube.com/watch?v=zcWZJ_IPvpI)
+
+### TODO
+- [x] Add comments about the jitter delay timing
+- [ ] Add architecture for swapping inputs for things like menu selections through rotary encoder
+- [ ] Set up Persistent Pomodoro process
+  - Something like the pause-less version, that enforces 'doros and breaks
+  - won't stop beeping until you acknowledge the transition to the next item.
+  - But maybe has a full lockdown where it will still remind you
+- [x] Another thing
